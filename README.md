@@ -1,74 +1,113 @@
 # Video Game Sales Analysis
 
-Análisis del histórico mundial de ventas de videojuegos para identificar qué
-**plataformas y géneros** tienen mayor potencial comercial y orientar la
-planificación de campañas del siguiente año.
+Análisis exploratorio para identificar qué factores predicen el éxito comercial
+de un videojuego según plataforma, género y región (2010–2016), con el fin de
+orientar la planificación de campañas.
 
 ## Objetivo del negocio
 
-Una tienda de videojuegos necesita decidir en qué títulos invertir para la
-campaña de 2017. El análisis responde:
+Una tienda de videojuegos en línea planifica su presupuesto publicitario para
+2017. Para invertir de forma eficiente necesita saber:
 
-> ¿Qué plataformas y géneros son más rentables, y qué factores (reseñas,
-> región, clasificación ESRB) influyen en las ventas?
+- ¿Qué plataformas están ganando o perdiendo cuota de mercado?
+- ¿Las reseñas de críticos o de usuarios realmente impulsan las ventas?
+- ¿Qué géneros son más rentables en cada región?
+- ¿Hay diferencias significativas de preferencia entre plataformas y géneros?
+
+Se usa el histórico de ventas de 1980 a 2016, acotando a **2010–2016** como el
+periodo más relevante para predecir el comportamiento cercano.
 
 ## Tecnologías
 
-- Python 3.11
-- pandas / NumPy — limpieza y agregación
-- SciPy — pruebas de hipótesis (t de Welch)
-- Matplotlib / Seaborn — visualización
-- Jupyter Notebook
+Python 3.11 · pandas · NumPy · SciPy · Matplotlib · Seaborn · Jupyter Notebook
 
 ## Dataset
 
-Un archivo `games.csv` con ventas por región, puntuaciones y clasificación
-ESRB de miles de títulos. Detalle en [`datasets/README.md`](datasets/README.md).
+`games.csv` — ~16 000 videojuegos.
 
-## Proceso de análisis
-
-1. **Carga y exploración** del dataset.
-2. **Limpieza:** nombres de columnas a minúsculas, `tbd` → `NaN` en
-   `user_score`, conversión de tipos y tratamiento de valores ausentes.
-3. **Enriquecimiento:** columna `total_sales` (suma de ventas regionales).
-4. **Análisis temporal:** lanzamientos por año y ciclo de vida de plataformas;
-   se acota el estudio al periodo relevante 2010-2016.
-5. **Plataformas y géneros:** ventas totales y promedio, distribución (boxplots).
-6. **Reseñas vs ventas:** correlación de `critic_score` y `user_score` con las
-   ventas (caso PS4).
-7. **Análisis regional:** preferencias de plataforma, género y ESRB en NA, EU y JP.
-8. **Pruebas de hipótesis:** Xbox One vs PC y Acción vs Deportes.
-
-## Resultados
-
-- **PS4 y Xbox One** son las plataformas más prometedoras para 2017.
-- **Acción** y **Shooter** son los géneros más rentables; **Puzzle** y
-  **Aventura**, los menos.
-- Las reseñas **profesionales** se correlacionan más con las ventas que las de
-  usuarios.
-- Las preferencias regionales difieren: NA/EU favorecen consolas de sobremesa y
-  shooters; Japón, portátiles y RPG.
-
-## Conclusiones
-
-Para 2017 conviene priorizar títulos de Acción/Shooter en PS4 y Xbox One para
-los mercados de NA y EU, y un catálogo diferenciado de RPG para Japón. Las
-puntuaciones de la crítica son una señal más útil que las de los usuarios al
-estimar el potencial de ventas.
+| Columna | Descripción |
+|---|---|
+| `name` | Título del juego |
+| `platform` | Consola/PC |
+| `year_of_release` | Año de lanzamiento |
+| `genre` | Género |
+| `na_sales` / `eu_sales` / `jp_sales` / `other_sales` | Ventas por región (millones USD) |
+| `critic_score` | Puntuación profesional (0–100) |
+| `user_score` | Puntuación de usuarios (0–10) |
+| `rating` | Clasificación ESRB |
 
 ## Estructura del proyecto
 
 ```
 video-game-sales-analysis/
 ├── Notebook/
-│   └── games_sales_analysis.ipynb     # análisis exploratorio
+│   └── games_sales_analysis.ipynb
 ├── datasets/
 │   └── games.csv
-├── video_game_sales_analysis.py       # análisis en formato script
+├── video_game_sales_analysis.py
 ├── requirements.txt
 ├── LICENSE
 └── README.md
 ```
+
+## Metodología
+
+**1. Limpieza.** Nombres de columnas a minúsculas; `tbd` → `NaN` en
+`user_score` (a float); `year_of_release` a entero con manejo seguro de nulos;
+columna `total_sales` (suma de ventas regionales); descarte de filas sin
+`name`, `genre` o `year_of_release`.
+
+**2. Análisis exploratorio.** Tendencia de lanzamientos por año (pico en
+2008–2010); ciclo de vida de plataformas (~5–10 años); boxplots de ventas por
+plataforma (escala log); dispersión reseñas vs ventas (PS4); barras de ventas
+por género, región (NA/EU/JP) y clasificación ESRB.
+
+**3. Pruebas de hipótesis.** Prueba t de Welch (`equal_var=False`), α = 0.05.
+
+## Resultados
+
+**Plataformas**
+
+- **PS4 y Xbox One** son las más prometedoras de cara a 2017 por su trayectoria.
+- X360, PS4 y Wii muestran las mayores ventas promedio por título.
+
+**Reseñas vs ventas (PS4)**
+
+| Tipo de reseña | Correlación con ventas |
+|---|---|
+| Crítica (Metacritic) | ~0.40 — relación moderada |
+| Usuarios | ~0.10 — relación despreciable |
+
+Las reseñas **profesionales** son un predictor de ventas más fiable que las de
+usuarios.
+
+**Géneros (2010–2016):** más rentables Acción, Shooter y Deportes; mayores
+ventas por título Shooter y Plataforma; menos rentables Puzzle, Estrategia y
+Aventura.
+
+**Preferencias regionales**
+
+| Región | Plataformas top | Géneros top |
+|---|---|---|
+| NA | PS4, XOne, X360 | Acción, Shooter, Deportes |
+| EU | PS4, XOne, X360 | Acción, Shooter, Deportes |
+| JP | 3DS, PS3, PSV | RPG, Acción, Misc |
+
+Japón muestra un perfil distinto: dominan las portátiles y los RPG.
+
+**Pruebas de hipótesis**
+
+- **Xbox One vs PC (puntuación de usuarios):** no se rechaza H₀ — sin diferencia
+  significativa.
+- **Acción vs Deportes (puntuación de usuarios):** se rechaza H₀ — las
+  puntuaciones difieren significativamente.
+
+## Conclusiones
+
+Para 2017 conviene priorizar títulos de Acción/Shooter en PS4 y Xbox One para NA
+y EU, y un catálogo diferenciado de RPG (y portátiles) para Japón. La crítica
+profesional es una señal más útil que la de usuarios al estimar el potencial de
+ventas.
 
 ## Cómo ejecutar
 
@@ -83,19 +122,11 @@ pip install -r requirements.txt
 jupyter notebook Notebook/games_sales_analysis.ipynb
 ```
 
-El análisis también está disponible como script en
+El mismo análisis está disponible como script en
 [`video_game_sales_analysis.py`](video_game_sales_analysis.py).
-
-## Capturas sugeridas
-
-En una carpeta `images/` puedes añadir:
-
-- Ventas por año de las plataformas principales.
-- Ventas totales por género (2010-2016).
-- Dispersión reseñas vs ventas (PS4).
 
 ## Trabajo futuro
 
-- Añadir comparativas gráficas región por región (sugerencia del análisis).
+- Añadir comparativas gráficas región por región.
 - Modelar la predicción de ventas con regresión.
 - Incorporar datos posteriores a 2016 para validar las predicciones.
