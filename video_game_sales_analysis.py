@@ -14,11 +14,6 @@ from scipy import stats
 
 
 # --- Análisis de ventas de videojuegos ---
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-from scipy import stats
-import numpy as np
 
 # Cargar el dataset
 df = pd.read_csv('datasets/games.csv')
