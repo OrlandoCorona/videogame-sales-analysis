@@ -112,8 +112,8 @@ ventas.
 ## Cómo ejecutar
 
 ```bash
-git clone https://github.com/OrlandoCorona/video-game-sales-analysis.git
-cd video-game-sales-analysis
+git clone https://github.com/OrlandoCorona/videogame-sales-analysis.git
+cd videogame-sales-analysis
 
 python -m venv venv
 source venv/bin/activate        # En Windows: venv\Scripts\activate
